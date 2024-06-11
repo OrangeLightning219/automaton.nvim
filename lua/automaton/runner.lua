@@ -344,6 +344,10 @@ function Runner.run(config, ws, t, onexit)
     local oscmd = Runner.select_os_command(t, "command")
     t.jobtype = Runner.TASK
 
+    if type(t.compiler) == "string" then
+        vim.api.nvim_command(":compiler! " .. t.compiler)
+    end
+
     if t.type == "shell" then
         Runner._run_shell(config, ws, oscmd, t, onexit)
     elseif t.type == "process" then

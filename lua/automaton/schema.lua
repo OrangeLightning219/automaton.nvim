@@ -25,6 +25,7 @@ local Schema = {
 Schema.tasks = vim.list_extend({
     "tasks",
     "command",
+    "compiler",
 }, Schema.common)
 
 Schema.launch = vim.list_extend({
