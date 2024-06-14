@@ -138,7 +138,7 @@ function Runner._append_output(lines, e)
     if e.quickfix == true then
         for _, line in ipairs(lines) do
             if string.len(line) > 0 then
-                local res = Pattern.resolve(line, e)
+                local res = Pattern.resolve(line:gsub("\r", ""), e)
 
                 if res then
                     Runner._append_line(res)
