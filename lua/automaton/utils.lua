@@ -104,18 +104,22 @@ function Utils.cmdline_split(s)
     local quote, escape = false, false
 
     for c in s:gmatch(".") do
-        table.insert(w, c)
-
-        if c == '\\' then
+        if not escape and c == '\\' then
             escape = true
-        elseif c == '"' and not escape then
-            quote = not quote
-        elseif c == ' ' and not quote and not escape then
-            table.remove(w, #w) -- Remove Last ' '
-            table.insert(cmd, table.concat(w))
-            w = {}
-        elseif escape then
-            escape = false
+        else
+            table.insert(w, c)
+
+            if c == '"' and not escape then
+                quote = not quote
+            elseif c == ' ' and not quote and not escape then
+                table.remove(w, #w) -- Remove Last ' '
+                table.insert(cmd, table.concat(w))
+                w = {}
+            end
+
+            if escape then
+                escape = false
+            end
         end
     end
 
