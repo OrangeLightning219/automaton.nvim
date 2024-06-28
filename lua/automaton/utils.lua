@@ -71,7 +71,16 @@ function Utils.get_number_of_cores()
 end
 
 function Utils.get_plugin_root()
-    return tostring(require("plenary.path"):new(debug.getinfo(1).source:sub(2)):parent())
+    local this_path = tostring(require("plenary.path"):new(debug.getinfo(1).source:sub(2))) --:parent())
+
+    if package.config:sub(1, 1) == '\\' then
+        -- we are on windows. debug.getinfo(1).source incorrectly returns 
+        -- a path using '/' as path separator. plenary's :parent() can't
+        -- handle these, therefore replace them
+        this_path = this_path:gsub("/", "\\")
+    end
+
+    return require("plenary.path"):new(this_path):parent()
 end
 
 function Utils.get_filename(p)
