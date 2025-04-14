@@ -37,7 +37,7 @@ function Utils.get_visual_selection()
 end
 
 function Utils.list_reinsert(t, inv, cmp)
-    assert(vim.tbl_islist(t))
+    assert(vim.islist(t))
     if not cmp then cmp = function(a, b) return a == b end end
 
     local idx = 0
@@ -74,7 +74,7 @@ function Utils.get_plugin_root()
     local this_path = tostring(require("plenary.path"):new(debug.getinfo(1).source:sub(2))) --:parent())
 
     if package.config:sub(1, 1) == '\\' then
-        -- we are on windows. debug.getinfo(1).source incorrectly returns 
+        -- we are on windows. debug.getinfo(1).source incorrectly returns
         -- a path using '/' as path separator. plenary's :parent() can't
         -- handle these, therefore replace them
         this_path = this_path:gsub("/", "\\")
@@ -95,9 +95,7 @@ function Utils.get_stem(p)
 end
 
 function Utils.list_reverse(l)
-    vim.validate({
-        l = { 1, function() return vim.tbl_islist(l) end }
-    })
+    vim.validate("l", l, vim.islist)
 
     local rev = {}
 

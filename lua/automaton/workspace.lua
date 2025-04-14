@@ -118,7 +118,7 @@ return function(config, rootpath)
     function Workspace:sync_state(state)
         local updated, wsconfig = false, self:get_config()
 
-        if type(wsconfig) == "table" and vim.tbl_islist(wsconfig) then
+        if type(wsconfig) == "table" and vim.islist(wsconfig) then
             for _, c in ipairs(wsconfig) do
                 if state[c.name] == nil and c.default then
                     state[c.name] = c.default
@@ -171,7 +171,7 @@ return function(config, rootpath)
     function Workspace:get_default_task()
         local tasks = self:get_tasks()
 
-        if type(tasks) == "table" and vim.tbl_islist(tasks) then
+        if type(tasks) == "table" and vim.islist(tasks) then
             for _, t in ipairs(tasks) do
                 if t.default == true then
                     return t
@@ -185,7 +185,7 @@ return function(config, rootpath)
     function Workspace:get_default_launch()
         local configs = self:get_launch()
 
-        if type(configs) == "table" and vim.tbl_islist(configs) then
+        if type(configs) == "table" and vim.islist(configs) then
             for _, l in ipairs(configs) do
                 if l.default == true then
                     return l
@@ -231,7 +231,7 @@ return function(config, rootpath)
     function Workspace:get_depends(e, byname, depends)
         depends = depends or { }
 
-        if vim.tbl_islist(e.depends) then
+        if vim.islist(e.depends) then
             for _, dep in ipairs(e.depends) do
                 if byname[dep] then
                     Utils.list_reinsert(depends, byname[dep], function(a, b) return a.name == b.name end)

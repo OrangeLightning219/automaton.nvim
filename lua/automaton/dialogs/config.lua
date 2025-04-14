@@ -1,10 +1,10 @@
 local Select = require("automaton.dialogs.select")
 local Table = require("automaton.dialogs.table")
 
-local M = { }
+local M = {}
 
 function M.update_config(ws, selconfig, config, state)
-    if vim.tbl_islist(selconfig.choices) then
+    if vim.islist(selconfig.choices) then
         local choices = vim.deepcopy(selconfig.choices)
         table.insert(choices, "..")
 
@@ -12,7 +12,7 @@ function M.update_config(ws, selconfig, config, state)
             prompt_title = vim.F.if_nil(selconfig.label, selconfig.name),
 
             entry_maker = function(e)
-                local entry = { display = e, ordinal = e,  }
+                local entry = { display = e, ordinal = e, }
 
                 if e == state[selconfig.name] then
                     entry.display = entry.display .. " [SELECTED]"
@@ -52,8 +52,8 @@ function M.edit_config(ws, config, state)
         prompt_title = "Configuration",
 
         columns = {
-            {width = 40},
-            {remaining = true}
+            { width = 40 },
+            { remaining = true }
         },
 
         entry_maker = function(e)
@@ -66,8 +66,8 @@ function M.edit_config(ws, config, state)
 
         displayer = function(e)
             return {
-                {e.ordinal, "TelescopeResultsIdentifier"},
-                {e.state, "TelescopeResultsNumber"},
+                { e.ordinal, "TelescopeResultsIdentifier" },
+                { e.state,   "TelescopeResultsNumber" },
             }
         end
     }, function(e)
@@ -78,14 +78,11 @@ end
 local function edit_config(ws)
     local config = ws:get_config()
     local state = ws:get_state()
+    vim.validate("config", config, "table")
+    vim.validate("state", state, "table")
 
-    vim.validate({
-        config = {config, "table"},
-        state = {state, "table"},
-    })
-
-    if not vim.tbl_islist(config) then error("Config must be a list") end
-    if vim.tbl_islist(state) then error("State must be an object") end
+    if not vim.islist(config) then error("Config must be a list") end
+    if vim.islist(state) then error("State must be an object") end
 
     if not vim.tbl_isempty(config) then
         M.edit_config(ws, config, state)
