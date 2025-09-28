@@ -196,6 +196,25 @@ return function(config, rootpath)
         return nil
     end
 
+    function Workspace:tasks_run(name)
+        local tasks = self:get_tasks()
+
+        local task = nil
+        if type(tasks) == "table" and vim.islist(tasks) then
+            for _, t in ipairs(tasks) do
+                if t.name == name then
+                    task = t
+                    break
+                end
+            end
+        end
+
+        if task then self:run(task)
+        else vim.notify("Task " .. name .. " not found")
+        end
+
+    end
+
     function Workspace:launch_default(debug)
         local launch = self:get_default_launch()
         if launch then self:launch(launch, debug)

@@ -468,8 +468,10 @@ function Automaton.setup(config)
 
             if arg == "default" then
                 ws:tasks_default()
-            else
+            elseif arg == "show" then
                 ws:show_tasks()
+            else
+                ws:tasks_run(arg)
             end
         elseif action == "open" then
             check_arg()
