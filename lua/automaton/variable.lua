@@ -67,7 +67,7 @@ local function resolve_all(obj, variables)
     local t = type(obj)
 
     if t == "table" then
-        if vim.tbl_islist(obj) then
+        if vim.islist(obj) then
             for i, item in ipairs(obj) do
                 obj[i] = vim.F.if_nil(resolve_all(item, variables), item)
             end

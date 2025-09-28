@@ -162,14 +162,14 @@ function Runner.select_os_command(e, cmdkey)
         cmds.command = vim.F.if_nil(e[osname][cmdkey], e[cmdkey])
 
         -- If command is a list, args doesn't make sense
-        if not vim.tbl_islist(cmds.command) then
+        if not vim.islist(cmds.command) then
             cmds.args = vim.F.if_nil(e[osname].args, e.args)
         end
     else
         cmds.command = e[cmdkey]
 
         -- If command is a list, args doesn't make sense
-        if not vim.tbl_islist(cmds.command) then
+        if not vim.islist(cmds.command) then
             cmds.args = e.args
         end
     end
@@ -186,7 +186,7 @@ function Runner._colorize(s, color, e)
 end
 
 function Runner._run(config, ws, cmds, e, onexit, i)
-    assert(vim.tbl_islist(cmds))
+    assert(vim.islist(cmds))
     i = i or 1
 
     if i > #cmds then
@@ -290,34 +290,17 @@ function Runner._run(config, ws, cmds, e, onexit, i)
 end
 
 function Runner._run_shell(config, ws, oscmd, options, onexit)
-    local runcmds = Runner._parse_command(oscmd)
+    local runcmds = Runner._parse_command(oscmd, true)
     Runner._run(config, ws, runcmds, options, onexit)
 end
 
 function Runner._run_process(config, ws, cmds, options, onexit)
-    local runcmds = Runner._parse_program(cmds, options)
+    local runcmds = Runner._parse_command(cmds, true)
     Runner._run(config, ws, runcmds, options, onexit)
 end
 
-function Runner._parse_command(oscmd)
-    local cmds = vim.tbl_islist(oscmd.command) and oscmd.command or { oscmd }
-    local runcmds = {}
-
-    for _, cmd in ipairs(cmds) do
-        local runcmd = { cmd.command or cmd }
-
-        if vim.tbl_islist(cmd.args) then
-            vim.list_extend(runcmd, cmd.args)
-        end
-
-        table.insert(runcmds, table.concat(runcmd, " "))
-    end
-
-    return runcmds
-end
-
-function Runner._parse_program(oscmd, concat)
-    local cmds = vim.tbl_islist(oscmd.command) and oscmd.command or { oscmd }
+function Runner._parse_command(oscmd, concat)
+    local cmds = vim.islist(oscmd.command) and oscmd.command or { oscmd }
     local runcmds = {}
 
     for _, cmd in ipairs(cmds) do
@@ -330,7 +313,7 @@ function Runner._parse_program(oscmd, concat)
             runcmd = { c }
         end
 
-        if vim.tbl_islist(cmd.args) then
+        if vim.islist(cmd.args) then
             vim.list_extend(runcmd, cmd.args)
         end
 

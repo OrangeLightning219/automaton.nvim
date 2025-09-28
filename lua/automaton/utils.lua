@@ -37,7 +37,7 @@ function Utils.get_visual_selection()
 end
 
 function Utils.list_reinsert(t, inv, cmp)
-    assert(vim.tbl_islist(t))
+    assert(vim.islist(t))
     if not cmp then cmp = function(a, b) return a == b end end
 
     local idx = 0
@@ -71,7 +71,16 @@ function Utils.get_number_of_cores()
 end
 
 function Utils.get_plugin_root()
-    return tostring(require("plenary.path"):new(debug.getinfo(1).source:sub(2)):parent())
+    local this_path = tostring(require("plenary.path"):new(debug.getinfo(1).source:sub(2))) --:parent())
+
+    if package.config:sub(1, 1) == '\\' then
+        -- we are on windows. debug.getinfo(1).source incorrectly returns
+        -- a path using '/' as path separator. plenary's :parent() can't
+        -- handle these, therefore replace them
+        this_path = this_path:gsub("/", "\\")
+    end
+
+    return require("plenary.path"):new(this_path):parent()
 end
 
 function Utils.get_filename(p)
@@ -86,9 +95,7 @@ function Utils.get_stem(p)
 end
 
 function Utils.list_reverse(l)
-    vim.validate({
-        l = { 1, function() return vim.tbl_islist(l) end }
-    })
+    vim.validate("l", l, vim.islist)
 
     local rev = {}
 
@@ -104,18 +111,22 @@ function Utils.cmdline_split(s)
     local quote, escape = false, false
 
     for c in s:gmatch(".") do
-        table.insert(w, c)
-
-        if c == '\\' then
+        if not escape and c == '\\' then
             escape = true
-        elseif c == '"' and not escape then
-            quote = not quote
-        elseif c == ' ' and not quote and not escape then
-            table.remove(w, #w) -- Remove Last ' '
-            table.insert(cmd, table.concat(w))
-            w = {}
-        elseif escape then
-            escape = false
+        else
+            table.insert(w, c)
+
+            if c == '"' and not escape then
+                quote = not quote
+            elseif c == ' ' and not quote and not escape then
+                table.remove(w, #w) -- Remove Last ' '
+                table.insert(cmd, table.concat(w))
+                w = {}
+            end
+
+            if escape then
+                escape = false
+            end
         end
     end
 

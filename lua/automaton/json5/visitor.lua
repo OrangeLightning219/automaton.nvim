@@ -26,7 +26,7 @@ local function visit(obj, v)
     if t == "table" then
         local size = vim.tbl_count(obj)
 
-        if vim.tbl_islist(obj) then
+        if vim.islist(obj) then
             v:start_list(size)
 
             for i, item in ipairs(obj) do
